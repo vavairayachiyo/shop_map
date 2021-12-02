@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="./style.css">
+  <title>3Grants Map</title>
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      height: calc(100% - 102px);
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>3Grants Map</h1>
+  <p>どちらの店舗を利用されたいですか<select name="place" id="selectPlace"> 
+    <option value="">選択してください</option>
+    <option value="1">山口県</option>
+    <option value="2">福岡県</option>
+    </select></p>
+  <div id="map"></div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script
+    src='https://www.bing.com/api/maps/mapcontrol?key='
+    async defer></script>
+
+  <script>
+
+    // マップ情報格納用の変数
+    let map;
+
+    // 省略
+    const option = {
+      enableHighAccuracy: true,
+      maximumAge: 20000,
+      timeout: 1000000,
+
+    };
+
+    // 省略
+    function showError(error) {
+      const erroreMessage = [
+        "位置情報が許可されてません",
+        "現在位置を特定できません",
+        "位置情報を取得する前にタイムアウトになりました",
+      ];
+      alert(`error:${errorMessages[error.code - 1]}`);
+    }
+
+    // ピンを立てる関数
+    function pushPin(lat, lng, map) {
+      const location = new Microsoft.Maps.Location(lat, lng);
+      const pin = new Microsoft.Maps.Pushpin(location, {
+      color: "red",
+      visible: true,
+  　});
+ 　 map.entities.push(pin);
+　　}
+
+    // Infobox (位置情報)　初期設置
+    function generateInfobox(lat, lng, map) {
+    
+      const location = new Microsoft.Maps.Location(lat, lng);
+      const infobox = new Microsoft.Maps.Infobox(location, {
+  
+          title: `現在地`,
+          description: "現在ここにいます",
+      });
+      infobox.setMap(map);
+      //alert(flag);
+      //console.log(flag);
+    }
+
+    // Infobox (位置情報)　山口設置
+    function generateInfoboxY(lat, lng, map) {
+    
+    const location = new Microsoft.Maps.Location(lat, lng);
+    const infobox = new Microsoft.Maps.Infobox(location, {
+  
+        title: `3Grants本店`,
+        description: "〒745-0846 山口県周南市東山町３−２８",
+    });
+    infobox.setMap(map);
+    //alert(flag);
+    //console.log(flag);
+  }    
+
+  // Infobox (位置情報)　博多設置
+  function generateInfoboxH(lat, lng, map) {
+    
+    const location = new Microsoft.Maps.Location(lat, lng);
+    const infobox = new Microsoft.Maps.Infobox(location, {
+  
+        title: `3Grants博多店`,
+        description: "〒815-0033 福岡県福岡市南区大橋１丁目２−８ レーベント大橋 402",
+    });
+    infobox.setMap(map);
+    //alert(flag);
+    //console.log(flag);
+  } 
+    // この後マップ表示の処理を書き込む
+    function mapsInit() { };
+
+    // geo_and_map.html
+
+    function mapsInit(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      map = new Microsoft.Maps.Map("#map", {
+        center: {
+          latitude: lat,
+          longitude: lng,
+          //latitude: 33.5600932,
+          //longitude: 130.4249899,
+        },
+        zoom: 17,
+      });
+      pushPin(lat, lng, map);
+      generateInfobox(lat, lng, map);
+      flag = 0;
+    }
+    // geo_and_map.html
+
+    window.onload = function () {
+      navigator.geolocation.getCurrentPosition(mapsInit, showError, option);
+    };
+
+var select = document.getElementById('selectPlace');
+var flag = 0;
+select.onchange = function(){
+  //alert(this.value);
+  //console.log(this.value);
+  if(this.value == 1){
+    flag = 1;
+    map = new Microsoft.Maps.Map("#map", {
+        center: {
+          latitude: 34.0475034,
+          longitude: 131.8121775,
+        },
+        zoom: 17,
+      });
+      const latY = 34.0475034;
+      const lngY = 131.8121775;
+      pushPin(latY, lngY, map);
+      generateInfoboxY(latY, lngY, map);
+  }
+  else
+    if(this.value ==2){
+    flag = 2; 
+    map = new Microsoft.Maps.Map("#map", {
+        center: {
+          latitude: 33.560098,
+          longitude: 130.427182,
+        },
+        zoom: 17,
+      });
+      const latH = 33.560098;
+      const lngH = 130.427182;
+      pushPin(latH, lngH, map);
+      generateInfoboxH(latH, lngH, map);
+    }else{}
+  }
+  alert(flag); 
+  </script>
+
+</body>
+
+</html>
